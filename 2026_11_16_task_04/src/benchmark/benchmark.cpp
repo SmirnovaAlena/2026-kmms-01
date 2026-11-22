@@ -8,45 +8,43 @@
 
 #include "sort.hpp"
 
-using namespace std;
+double measure(void (*sort)(int*, const int), const std::vector<int>& source) {
+    std::vector<int> data = source;
 
-double measure(void (*sort)(int*, const int), const vector<int>& source) {
-    vector<int> data = source;
-
-    auto start = chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
     sort(data.data(), (int)data.size());
-    auto end = chrono::high_resolution_clock::now();
+    auto end = std::chrono::high_resolution_clock::now();
 
     for (int i = 1; i < (int)data.size(); i++) {
         if (data[i - 1] > data[i]) {
-            cout << "Ошибка: массив не отсортирован" << endl;
-            exit(1);
+            std::cout << "Ошибка: массив не отсортирован" << std::endl;
+            std::exit(1);
         }
     }
 
-    chrono::duration<double, milli> time = end - start;
+    std::chrono::duration<double, std::milli> time = end - start;
     return time.count();
 }
 
 int main() {
     const int sizes[] = {10000, 100000};
-    vector<int> arrays[2];
+    std::vector<int> arrays[2];
 
-    srand(42);
+    std::srand(42);
     for (int k = 0; k < 2; k++) {
         arrays[k].resize(sizes[k]);
         for (int i = 0; i < sizes[k]; i++) {
-            arrays[k][i] = rand() % 2000001 - 1000000;
+            arrays[k][i] = std::rand() % 2000001 - 1000000;
         }
     }
 
-    ofstream report("benchmark_results.md");
-    report << "# Результаты замеров сортировок" << endl;
-    report << endl;
-    report << "| Сортировка | 10 000, мс | 100 000, мс |" << endl;
-    report << "|---|---:|---:|" << endl;
+    std::ofstream report("benchmark_results.md");
+    report << "# Результаты замеров сортировок" << std::endl;
+    report << std::endl;
+    report << "| Сортировка | 10 000, мс | 100 000, мс |" << std::endl;
+    report << "|---|---:|---:|" << std::endl;
 
-    string names[] = {
+    std::string names[] = {
         "Пузырёк классический",
         "Пузырёк с ранним выходом",
         "Пузырёк с оптимизацией правой границы",
@@ -79,8 +77,8 @@ int main() {
         double time2 = measure(sorts[i], arrays[1]);
 
         report << "| " << names[i] << " | "
-               << fixed << setprecision(2) << time1 << " | " << time2 << " |" << endl;
-        cout << names[i] << ": " << time1 << " мс, " << time2 << " мс" << endl;
+               << std::fixed << std::setprecision(2) << time1 << " | " << time2 << " |" << std::endl;
+        std::cout << names[i] << ": " << time1 << " мс, " << time2 << " мс" << std::endl;
     }
 
     report.close();
